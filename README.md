@@ -1,8 +1,8 @@
 # ML Playground
 
 A user-friendly, web-based interface for experimenting with common machine learning algorithms. Upload your own CSV dataset, select a model, and instantly see a simulated analysis and prediction results.
-
- <!-- You can replace this with a real screenshot -->
+[![CI/CD - Build and Push](https://github.com/your-username/ml-website/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/your-username/ml-website/actions/workflows/ci-cd.yml)
+![ML Playground Screenshot](./docs/screenshot.png)
 
 ## ✨ Features
 
@@ -41,7 +41,7 @@ You need to have Node.js (which includes npm) installed on your system.
 
 1.  **Clone the repository:**
     ```sh
-    git clone https://github.com/dineshmishra2019/ml-website.git
+    git clone https://github.com/your-username/ml-website.git
     cd ml-website
     ```
 
@@ -73,3 +73,61 @@ This will run the app in development mode. Open http://localhost:3000 to view it
 4.  **View Results**: The analysis summary, performance metrics, and prediction table will appear below.
 
 ---
+
+## 🐳 Running with Docker
+
+You can also run this application inside a Docker container.
+
+### Build the Image
+
+First, build the Docker image from the `Dockerfile`:
+
+```sh
+docker build -t your-dockerhub-username/ml-playground .
+```
+
+### Run the Container
+
+Once the image is built, run it as a container:
+
+```sh
+docker run -p 8080:80 your-dockerhub-username/ml-playground
+```
+
+The application will be available at http://localhost:8080.
+
+---
+
+## 📦 Deploying with Helm
+
+A Helm chart is available in the `helm/` directory for easy deployment to Kubernetes.
+
+### Prerequisites
+
+- A Kubernetes cluster (e.g., Minikube, Docker Desktop, or a cloud provider)
+- Helm installed
+
+### Installation
+
+This chart is published to GitHub Packages. To install it, you first need to log in to the GitHub Container Registry (ghcr.io).
+1.  **Update the image repository:**
+1.  **Log in to GHCR with Helm:**
+    ```sh
+    echo $CR_PAT | helm registry login ghcr.io --username your-username --password-stdin
+    ```
+    > **Note:** `$CR_PAT` should be a Personal Access Token (PAT) with `read:packages` scope.
+2.  **Install the chart:**
+2.  **Install the chart from the OCI registry:**
+    Replace `your-username` with your GitHub username and specify the chart version you want to deploy.
+    helm install my-release helm/ml-playground
+    helm install my-release oci://ghcr.io/your-username/charts/ml-playground --version 0.1.0 \
+      --set image.repository=your-dockerhub-username/ml-playground
+
+    This will deploy the ML Playground application into your currently configured Kubernetes cluster.
+    This will deploy the ML Playground application into your currently configured Kubernetes cluster. You can then access it using the instructions printed by Helm, typically by setting up port-forwarding or an Ingress controller.
+
+## 🔄 CI/CD
+
+This project uses GitHub Actions to automatically build and push the Docker image to Docker Hub and the Helm chart to GitHub Packages.
+
+The pipeline is triggered on every push to the `main` branch. You can view the workflow status from the badge at the top of this README.

@@ -1,0 +1,27 @@
+# Patterns to ignore when building packages.
+# This supports shell glob matching, relative path matching, and
+# negation (prefixed with !).
+
+# Source code
+src/
+component/
+public/
+node_modules/
+
+# Docs
+docs/
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Other
+*.log
+Dockerfile
+nginx.conf
+.dockerignore
+package.json
+package-lock.json
+README.
