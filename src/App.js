@@ -104,7 +104,7 @@ const App = () => {
       // Here, you would normally send the data and selected algorithm to a backend
       // for actual processing. For this demo, we'll use mock data.
       
-      // Simulate analysis results
+      // Simulate analysis results with more detail
       const mockAnalysis = {
         summary: `Analysis complete for ${file.name} using ${selectedAlgorithm}. The model has been trained on the data.`,
         dataStatistics: {
@@ -113,11 +113,13 @@ const App = () => {
           features: columns.filter(c => c !== 'label').join(', '),
           target: 'label',
         },
-        // We'll create a simple visualization for the analysis
-        correlationData: [
-          { name: 'Feature 1', correlation: 0.8 },
-          { name: 'Feature 2', correlation: 0.6 },
-        ]
+        // We'll create mock metrics for the prediction
+        predictionMetrics: {
+          accuracy: (Math.random() * (0.95 - 0.75) + 0.75).toFixed(2),
+          precision: (Math.random() * (0.9 - 0.7) + 0.7).toFixed(2),
+          recall: (Math.random() * (0.92 - 0.72) + 0.72).toFixed(2),
+          f1_score: (Math.random() * (0.91 - 0.71) + 0.71).toFixed(2),
+        }
       };
       setAnalysisResults(mockAnalysis);
       
@@ -241,25 +243,49 @@ const App = () => {
           <section className="bg-gray-800 p-8 rounded-2xl shadow-xl mb-8">
             <h2 className="text-3xl font-bold mb-6 text-white">3. Analysis & Prediction Results</h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Analysis Summary */}
-              <div>
-                <h3 className="text-2xl font-semibold mb-4 text-white">Model Analysis</h3>
-                <p className="text-gray-300">{analysisResults.summary}</p>
-                <ul className="mt-4 space-y-2 text-gray-400">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Box 1: Model Summary */}
+              <div className="bg-gray-700 p-6 rounded-xl shadow-lg border border-gray-600">
+                <h3 className="text-xl font-semibold mb-4 text-white">Model Analysis Summary</h3>
+                <p className="text-gray-300 mb-4">{analysisResults.summary}</p>
+                <ul className="space-y-2 text-gray-400">
                   <li><span className="font-semibold text-gray-200">Rows:</span> {analysisResults.dataStatistics.rows}</li>
                   <li><span className="font-semibold text-gray-200">Columns:</span> {analysisResults.dataStatistics.columns}</li>
                   <li><span className="font-semibold text-gray-200">Features:</span> {analysisResults.dataStatistics.features}</li>
-                  <li><span className="font-semibold text-gray-200">Target Variable:</span> {analysisResults.dataStatistics.target}</li>
+                  <li><span className="font-semibold text-gray-200">Target:</span> {analysisResults.dataStatistics.target}</li>
                 </ul>
               </div>
 
-              {/* Prediction Results Table */}
-              <div>
-                <h3 className="text-2xl font-semibold mb-4 text-white">Predictions</h3>
+              {/* Box 2: Prediction Metrics */}
+              <div className="bg-gray-700 p-6 rounded-xl shadow-lg border border-gray-600">
+                <h3 className="text-xl font-semibold mb-4 text-white">Prediction Metrics</h3>
+                <p className="text-gray-400 mb-4">Performance of the selected algorithm.</p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-gray-600 p-4 rounded-lg text-center">
+                    <p className="text-lg font-bold text-emerald-400">{analysisResults.predictionMetrics.accuracy}</p>
+                    <p className="text-sm text-gray-300">Accuracy</p>
+                  </div>
+                  <div className="bg-gray-600 p-4 rounded-lg text-center">
+                    <p className="text-lg font-bold text-yellow-400">{analysisResults.predictionMetrics.precision}</p>
+                    <p className="text-sm text-gray-300">Precision</p>
+                  </div>
+                  <div className="bg-gray-600 p-4 rounded-lg text-center">
+                    <p className="text-lg font-bold text-red-400">{analysisResults.predictionMetrics.recall}</p>
+                    <p className="text-sm text-gray-300">Recall</p>
+                  </div>
+                  <div className="bg-gray-600 p-4 rounded-lg text-center">
+                    <p className="text-lg font-bold text-blue-400">{analysisResults.predictionMetrics.f1_score}</p>
+                    <p className="text-sm text-gray-300">F1 Score</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Box 3: Predictions Table */}
+              <div className="lg:col-span-1 bg-gray-700 p-6 rounded-xl shadow-lg border border-gray-600">
+                <h3 className="text-xl font-semibold mb-4 text-white">Predictions</h3>
                 <div className="overflow-x-auto rounded-xl">
-                  <table className="min-w-full bg-gray-700 rounded-xl overflow-hidden">
-                    <thead className="bg-gray-600">
+                  <table className="min-w-full bg-gray-600 rounded-xl overflow-hidden">
+                    <thead className="bg-gray-500">
                       <tr>
                         {columns.map((col) => (
                           <th key={col} className="px-4 py-2 text-left text-sm font-medium text-gray-300">{col}</th>
@@ -269,7 +295,7 @@ const App = () => {
                     </thead>
                     <tbody>
                       {predictionResults.slice(0, 5).map((row, index) => (
-                        <tr key={index} className={`${index % 2 === 0 ? 'bg-gray-700' : 'bg-gray-700/80'} hover:bg-gray-600 transition-colors duration-200`}>
+                        <tr key={index} className={`${index % 2 === 0 ? 'bg-gray-600' : 'bg-gray-600/80'} hover:bg-gray-500 transition-colors duration-200`}>
                           {columns.map((col) => (
                             <td key={`${index}-${col}`} className="px-4 py-2 text-sm text-gray-300">{row[col]}</td>
                           ))}
