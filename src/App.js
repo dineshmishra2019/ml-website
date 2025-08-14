@@ -1,18 +1,6 @@
 import React, { useState } from 'react';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer
-} from 'recharts';
-import {
-  BarChart,
-  Bar
-} from 'recharts';
+import Modal from '../component/Modal';
+import AnalysisResults from '../component/AnalysisResults';
 
 // A simple, custom CSV parser to avoid external dependencies.
 // This function reads a CSV string and returns an array of objects.
@@ -57,6 +45,7 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [analysisResults, setAnalysisResults] = useState(null);
   const [predictionResults, setPredictionResults] = useState(null);
+  const [error, setError] = useState(null);
 
   const handleFileChange = (e) => {
     const uploadedFile = e.target.files[0];
@@ -81,20 +70,7 @@ const App = () => {
 
   const handleRunAnalysis = () => {
     if (!data || !selectedAlgorithm) {
-      // Use a custom message box instead of alert()
-      const messageBox = document.createElement('div');
-      messageBox.className = 'fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-75 z-50';
-      messageBox.innerHTML = `
-        <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 max-w-sm mx-auto">
-          <p class="text-white mb-4">Please upload a dataset and select an algorithm first.</p>
-          <div class="text-right">
-            <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200" onclick="this.closest('.fixed').remove()">
-              OK
-            </button>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(messageBox);
+      setError('Please upload a dataset and select an algorithm first.');
       return;
     }
 
@@ -137,6 +113,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-200 p-8 font-inter">
+      {error && <Modal message={error} onClose={() => setError(null)} />}
       <div className="max-w-6xl mx-auto">
         <header className="text-center mb-12">
           <h1 className="text-5xl font-extrabold text-white mb-4">ML Playground</h1>
