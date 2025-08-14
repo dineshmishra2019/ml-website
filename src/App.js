@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Modal from '../component/Modal';
-import AnalysisResults from '../component/AnalysisResults';
+import Modal from './component/Modal';
+import AnalysisResults from './component/AnalysisResults';
 
 // A simple, custom CSV parser to avoid external dependencies.
 // This function reads a CSV string and returns an array of objects.
@@ -36,6 +36,21 @@ const mlAlgorithms = [
   'Decision Tree',
   'Random Forest',
 ];
+
+const getAlgorithmSummary = (algorithmName) => {
+  switch (algorithmName) {
+    case 'Linear Regression':
+      return "Linear Regression finds the best straight-line relationship in your data. It's used to predict continuous values, like a house price, based on other factors (features).";
+    case 'Logistic Regression':
+      return "Logistic Regression is used for predicting a 'yes' or 'no' outcome (classification). It calculates the probability of an event happening, like whether an email is spam.";
+    case 'Decision Tree':
+      return "A Decision Tree creates a flowchart of 'if-then' rules from your data. It splits the data based on features to make a final prediction, making its logic easy to follow.";
+    case 'Random Forest':
+      return "A Random Forest is a team of many Decision Trees. By combining their predictions, it often produces a more accurate and stable result than a single tree.";
+    default:
+      return "The model has been trained on the data, learning patterns to make predictions.";
+  }
+};
 
 const App = () => {
   const [file, setFile] = useState(null);
@@ -80,9 +95,11 @@ const App = () => {
       // Here, you would normally send the data and selected algorithm to a backend
       // for actual processing. For this demo, we'll use mock data.
       
+      const summaryText = getAlgorithmSummary(selectedAlgorithm);
+
       // Simulate analysis results with more detail
       const mockAnalysis = {
-        summary: `Analysis complete for ${file.name} using ${selectedAlgorithm}. The model has been trained on the data.`,
+        summary: summaryText,
         dataStatistics: {
           rows: data.length,
           columns: columns.length,
@@ -216,79 +233,12 @@ const App = () => {
           </div>
         )}
 
-        {analysisResults && (
-          <section className="bg-gray-800 p-8 rounded-2xl shadow-xl mb-8">
-            <h2 className="text-3xl font-bold mb-6 text-white">3. Analysis & Prediction Results</h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Box 1: Model Summary */}
-              <div className="bg-gray-700 p-6 rounded-xl shadow-lg border border-gray-600">
-                <h3 className="text-xl font-semibold mb-4 text-white">Model Analysis Summary</h3>
-                <p className="text-gray-300 mb-4">{analysisResults.summary}</p>
-                <ul className="space-y-2 text-gray-400">
-                  <li><span className="font-semibold text-gray-200">Rows:</span> {analysisResults.dataStatistics.rows}</li>
-                  <li><span className="font-semibold text-gray-200">Columns:</span> {analysisResults.dataStatistics.columns}</li>
-                  <li><span className="font-semibold text-gray-200">Features:</span> {analysisResults.dataStatistics.features}</li>
-                  <li><span className="font-semibold text-gray-200">Target:</span> {analysisResults.dataStatistics.target}</li>
-                </ul>
-              </div>
-
-              {/* Box 2: Prediction Metrics */}
-              <div className="bg-gray-700 p-6 rounded-xl shadow-lg border border-gray-600">
-                <h3 className="text-xl font-semibold mb-4 text-white">Prediction Metrics</h3>
-                <p className="text-gray-400 mb-4">Performance of the selected algorithm.</p>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-gray-600 p-4 rounded-lg text-center">
-                    <p className="text-lg font-bold text-emerald-400">{analysisResults.predictionMetrics.accuracy}</p>
-                    <p className="text-sm text-gray-300">Accuracy</p>
-                  </div>
-                  <div className="bg-gray-600 p-4 rounded-lg text-center">
-                    <p className="text-lg font-bold text-yellow-400">{analysisResults.predictionMetrics.precision}</p>
-                    <p className="text-sm text-gray-300">Precision</p>
-                  </div>
-                  <div className="bg-gray-600 p-4 rounded-lg text-center">
-                    <p className="text-lg font-bold text-red-400">{analysisResults.predictionMetrics.recall}</p>
-                    <p className="text-sm text-gray-300">Recall</p>
-                  </div>
-                  <div className="bg-gray-600 p-4 rounded-lg text-center">
-                    <p className="text-lg font-bold text-blue-400">{analysisResults.predictionMetrics.f1_score}</p>
-                    <p className="text-sm text-gray-300">F1 Score</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Box 3: Predictions Table */}
-              <div className="lg:col-span-1 bg-gray-700 p-6 rounded-xl shadow-lg border border-gray-600">
-                <h3 className="text-xl font-semibold mb-4 text-white">Predictions</h3>
-                <div className="overflow-x-auto rounded-xl">
-                  <table className="min-w-full bg-gray-600 rounded-xl overflow-hidden">
-                    <thead className="bg-gray-500">
-                      <tr>
-                        {columns.map((col) => (
-                          <th key={col} className="px-4 py-2 text-left text-sm font-medium text-gray-300">{col}</th>
-                        ))}
-                        <th className="px-4 py-2 text-left text-sm font-medium text-gray-300">Prediction</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {predictionResults.slice(0, 5).map((row, index) => (
-                        <tr key={index} className={`${index % 2 === 0 ? 'bg-gray-600' : 'bg-gray-600/80'} hover:bg-gray-500 transition-colors duration-200`}>
-                          {columns.map((col) => (
-                            <td key={`${index}-${col}`} className="px-4 py-2 text-sm text-gray-300">{row[col]}</td>
-                          ))}
-                          <td className="px-4 py-2 text-sm text-gray-300">
-                            <span className={`px-2 py-1 rounded-full text-xs font-semibold ${row.prediction === row.label ? 'bg-green-600' : 'bg-red-600'}`}>
-                              {row.prediction}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </section>
+        {analysisResults && predictionResults && (
+          <AnalysisResults
+            analysisResults={analysisResults}
+            predictionResults={predictionResults}
+            columns={columns}
+          />
         )}
       </div>
     </div>
